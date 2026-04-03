@@ -1,0 +1,390 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ucs-standard.org/schema/v0.1.0",
+  "title": "Universal Cognitive Schema",
+  "description": "Open standard for portable AI identity across platforms. Version 0.1.0-alpha.",
+  "version": "0.1.0-alpha",
+  "type": "object",
+  "required": ["ucs_version", "profile_id", "created_at", "updated_at", "provenance"],
+
+  "properties": {
+
+    "ucs_version": {
+      "type": "string",
+      "description": "Version of the UCS schema this profile conforms to.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-z]+)?$",
+      "example": "0.1.0-alpha"
+    },
+
+    "profile_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this cognitive profile. Generated at creation, never changes."
+    },
+
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when this profile was first created."
+    },
+
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the most recent update to any dimension."
+    },
+
+    "persona": {
+      "type": "object",
+      "description": "Core communication identity — how this person naturally expresses themselves.",
+      "properties": {
+
+        "communication_style": {
+          "type": "string",
+          "enum": ["direct", "collaborative", "socratic", "narrative", "analytical", "mixed"],
+          "description": "Dominant mode of communication preferred by the user."
+        },
+
+        "formality": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Formality level. 0.0 = fully casual, 1.0 = fully formal."
+        },
+
+        "verbosity": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Preferred response length. 0.0 = minimal, 1.0 = exhaustive."
+        },
+
+        "tone_markers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Descriptive tags capturing tone qualities.",
+          "examples": [["curious", "precise", "occasionally humorous"]]
+        },
+
+        "language_preferences": {
+          "type": "object",
+          "properties": {
+            "primary": {
+              "type": "string",
+              "description": "BCP-47 language tag for primary language.",
+              "example": "en"
+            },
+            "others": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Additional languages the user works in."
+            }
+          },
+          "required": ["primary"]
+        }
+      }
+    },
+
+    "expertise_map": {
+      "type": "object",
+      "description": "Domains of knowledge — what the user knows and at what depth.",
+      "properties": {
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "depth"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Domain name.",
+                "example": "machine learning"
+              },
+              "depth": {
+                "type": "string",
+                "enum": ["aware", "functional", "proficient", "expert"],
+                "description": "Self-assessed or inferred depth of knowledge in this domain."
+              },
+              "last_active": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When this domain was last actively engaged."
+              },
+              "notes": {
+                "type": "string",
+                "description": "Optional freeform notes about this domain expertise."
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "project_graph": {
+      "type": "object",
+      "description": "Active and archived projects the user works on with AI assistance.",
+      "properties": {
+        "active": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/project" }
+        },
+        "archived": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/project" }
+        }
+      }
+    },
+
+    "preference_corpus": {
+      "type": "object",
+      "description": "Output and interaction preferences — how the user wants AI to respond.",
+      "properties": {
+
+        "output_format": {
+          "type": "string",
+          "enum": ["prose", "bullets", "structured", "mixed"],
+          "description": "Preferred format for AI responses."
+        },
+
+        "response_length": {
+          "type": "string",
+          "enum": ["concise", "moderate", "thorough"],
+          "description": "Preferred default length of AI responses."
+        },
+
+        "code_language_preferences": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Preferred programming languages, in order of preference.",
+          "example": ["python", "typescript", "bash"]
+        },
+
+        "citation_style": {
+          "type": "string",
+          "enum": ["inline", "footnote", "none"],
+          "description": "Preferred citation style when AI references sources."
+        },
+
+        "avoid": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Explicit things the user has asked AI to avoid.",
+          "example": ["excessive caveats", "bullet-only responses", "starting with 'Certainly'"]
+        },
+
+        "custom": {
+          "type": "object",
+          "description": "Freeform key-value store for preferences not covered by the standard fields.",
+          "additionalProperties": true
+        }
+      }
+    },
+
+    "interaction_patterns": {
+      "type": "object",
+      "description": "Observed patterns from how this user interacts with AI systems.",
+      "properties": {
+
+        "typical_prompt_style": {
+          "type": "string",
+          "description": "Characterisation of how the user typically frames their prompts.",
+          "example": "Short, context-rich instructions with implied assumptions."
+        },
+
+        "common_corrections": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Things the user frequently corrects AI on.",
+          "example": ["too verbose", "missing edge cases", "incorrect tone"]
+        },
+
+        "reinforced_behaviours": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Behaviours the user has positively reinforced.",
+          "example": ["step-by-step reasoning", "showing uncertainty explicitly"]
+        },
+
+        "rejected_behaviours": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Behaviours the user has explicitly rejected.",
+          "example": ["sycophantic openers", "over-qualification"]
+        }
+      }
+    },
+
+    "trust_boundaries": {
+      "type": "object",
+      "description": "What level of autonomy and action this user is comfortable delegating to AI.",
+      "properties": {
+
+        "autonomous_action_tolerance": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "How comfortable the user is with AI taking action without confirmation."
+        },
+
+        "preferred_confirmation_frequency": {
+          "type": "string",
+          "enum": ["always", "sometimes", "rarely"],
+          "description": "How often the user wants AI to check in before proceeding."
+        },
+
+        "sensitive_domains": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Topics or task types requiring extra care or explicit confirmation.",
+          "example": ["financial decisions", "external communications", "code deployment"]
+        }
+      }
+    },
+
+    "temporal_context": {
+      "type": "object",
+      "description": "Time-aware metadata — how the profile evolves and how history is weighted.",
+      "properties": {
+
+        "recency_weight": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "How heavily recent interactions are weighted vs older history. 1.0 = only recent matters, 0.0 = all equally weighted.",
+          "default": 0.7
+        },
+
+        "life_chapters": {
+          "type": "array",
+          "description": "Explicit periods the user has marked as distinct phases of their AI usage.",
+          "items": {
+            "type": "object",
+            "required": ["label", "from", "active"],
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Human-readable name for this chapter.",
+                "example": "Career transition 2026"
+              },
+              "from": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "to": {
+                "type": ["string", "null"],
+                "format": "date-time",
+                "description": "End of this chapter. Null if currently active."
+              },
+              "active": {
+                "type": "boolean",
+                "description": "Whether this is the current active chapter."
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "extensions": {
+      "type": "object",
+      "description": "Platform-specific or community extension namespaces. Must not conflict with core UCS fields. Implementations must ignore unknown extensions rather than erroring.",
+      "additionalProperties": {
+        "type": "object"
+      },
+      "example": {
+        "com.example.platform": {
+          "custom_field": "value"
+        }
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "description": "Metadata about how this profile was created and verified.",
+      "required": ["sanitised", "extraction_method"],
+      "properties": {
+
+        "source_platforms": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Platforms from which data was extracted to build this profile.",
+          "example": ["chatgpt", "claude", "gemini"]
+        },
+
+        "extraction_method": {
+          "type": "string",
+          "enum": ["api", "export", "manual", "synthesised", "mixed"],
+          "description": "How the source data was obtained."
+        },
+
+        "sanitised": {
+          "type": "boolean",
+          "description": "Whether this profile has passed sanitisation to remove prompt-injection patterns. MUST be true for any profile shared with a destination platform."
+        },
+
+        "sanitised_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When sanitisation was last performed."
+        },
+
+        "fidelity": {
+          "type": "object",
+          "description": "Per-dimension confidence scores indicating how reliably each dimension was captured.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "score": {
+                "type": "number",
+                "minimum": 0.0,
+                "maximum": 1.0
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+
+        "attestation_signature": {
+          "type": "string",
+          "description": "Cryptographic signature attesting that this profile has passed sanitisation and provenance verification. Format: base64-encoded."
+        }
+      }
+    }
+  },
+
+  "definitions": {
+    "project": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable project name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of the project."
+        },
+        "context_summary": {
+          "type": "string",
+          "description": "Distilled context — what an AI needs to know to assist with this project."
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+
+  "additionalProperties": false
+}
