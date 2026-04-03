@@ -1,0 +1,202 @@
+{
+  "_comment": "This is an anonymised example UCS profile. All data is fictional and for illustration purposes only.",
+
+  "ucs_version": "0.1.0-alpha",
+  "profile_id": "a3f7c2d1-84be-4f10-9c3a-d2e1b5f08a47",
+  "created_at": "2024-03-15T09:00:00Z",
+  "updated_at": "2026-04-01T14:32:00Z",
+
+  "persona": {
+    "communication_style": "direct",
+    "formality": 0.35,
+    "verbosity": 0.45,
+    "tone_markers": [
+      "precise",
+      "curious",
+      "occasionally dry",
+      "prefers examples over abstractions"
+    ],
+    "language_preferences": {
+      "primary": "en",
+      "others": ["ar"]
+    }
+  },
+
+  "expertise_map": {
+    "domains": [
+      {
+        "name": "product strategy",
+        "depth": "expert",
+        "last_active": "2026-04-01T00:00:00Z",
+        "notes": "Particularly strong in early-stage positioning and market narrative"
+      },
+      {
+        "name": "AI infrastructure",
+        "depth": "proficient",
+        "last_active": "2026-04-01T00:00:00Z",
+        "notes": "Growing fast — focused on middleware, memory systems, and identity layers"
+      },
+      {
+        "name": "open source governance",
+        "depth": "functional",
+        "last_active": "2026-03-20T00:00:00Z",
+        "notes": "RFC processes, foundation models, contributor management"
+      },
+      {
+        "name": "venture fundraising",
+        "depth": "functional",
+        "last_active": "2026-03-28T00:00:00Z",
+        "notes": "Seed and Series A dynamics, VC signalling, deck structure"
+      },
+      {
+        "name": "regulatory strategy",
+        "depth": "aware",
+        "last_active": "2026-03-10T00:00:00Z",
+        "notes": "EU AI Act, GDPR portability provisions, AI portability policy landscape"
+      }
+    ]
+  },
+
+  "project_graph": {
+    "active": [
+      {
+        "id": "b1e2f3a4-5c6d-7e8f-9a0b-c1d2e3f4a5b6",
+        "name": "Universal Cognitive Schema",
+        "description": "Open standard for portable AI identity across platforms. Building the neutral middleware layer that enables cognitive state migration between AI models.",
+        "context_summary": "UCS is an open schema standard (MIT licensed) defining 7 dimensions of AI identity: persona, expertise map, project graph, preference corpus, interaction patterns, trust boundaries, and temporal context. The project is at v0.1.0-alpha. GitHub repo is live. Next steps: sample profile, CONTRIBUTING.md, SECURITY.md, first HN post. Long-term goal: IETF Internet-Draft submission, independent foundation governance.",
+        "created_at": "2026-03-01T00:00:00Z",
+        "tags": ["open-standard", "ai-identity", "portability", "middleware", "infrastructure"]
+      },
+      {
+        "id": "c2d3e4f5-6a7b-8c9d-0e1f-a2b3c4d5e6f7",
+        "name": "UCS SaaS platform",
+        "description": "Commercial migration and identity persistence product built on top of the UCS standard.",
+        "context_summary": "Consumer-facing product: extract cognitive profile from any major AI platform, normalise to UCS, inject into destination. V1 scope: ChatGPT → Claude migration only. Revenue model: free migration, paid sync subscription, enterprise API. Target raise: $3-8M seed. Key differentiator from Mem0: consumer migration UX vs developer memory infrastructure.",
+        "created_at": "2026-03-15T00:00:00Z",
+        "tags": ["saas", "startup", "fundraising", "product"]
+      }
+    ],
+    "archived": [
+      {
+        "id": "d3e4f5a6-7b8c-9d0e-1f2a-b3c4d5e6f7a8",
+        "name": "AI platform research",
+        "description": "Research phase: mapping memory features, export formats, and lock-in mechanisms across ChatGPT, Claude, Gemini, Grok, Perplexity.",
+        "context_summary": "Completed. Key finding: no platform shares a common memory schema. Each defines memory differently. No standard possible from within the platforms. External neutral layer required.",
+        "created_at": "2026-01-10T00:00:00Z",
+        "tags": ["research", "completed"]
+      }
+    ]
+  },
+
+  "preference_corpus": {
+    "output_format": "mixed",
+    "response_length": "moderate",
+    "code_language_preferences": ["python", "typescript", "bash"],
+    "citation_style": "inline",
+    "avoid": [
+      "sycophantic openers",
+      "excessive caveats and qualifications",
+      "bullet-only responses for analytical topics",
+      "restating the question before answering",
+      "phrases like 'Certainly!' or 'Great question!'"
+    ],
+    "custom": {
+      "prefers_tables_for_comparisons": true,
+      "prefers_analogies_for_novel_concepts": true,
+      "wants_honest_pushback_not_agreement": true,
+      "preferred_code_style": "clean with inline comments on non-obvious logic"
+    }
+  },
+
+  "interaction_patterns": {
+    "typical_prompt_style": "Short, context-rich instructions. Assumes shared background. Often builds on previous turns without re-establishing context. Frequently uses hypotheticals and scenario framing.",
+    "common_corrections": [
+      "too much hedging — be direct",
+      "response too long — cut to the point",
+      "missing the strategic implication",
+      "too generic — make it specific to the situation"
+    ],
+    "reinforced_behaviours": [
+      "honest disagreement over polite agreement",
+      "naming the real risk not the diplomatic version",
+      "using concrete comparables and analogies",
+      "showing reasoning steps for non-obvious conclusions",
+      "flagging when a question has a better framing"
+    ],
+    "rejected_behaviours": [
+      "performative enthusiasm",
+      "over-qualification on clear statements",
+      "repeating conclusions already established in the conversation",
+      "suggesting obvious next steps without being asked"
+    ]
+  },
+
+  "trust_boundaries": {
+    "autonomous_action_tolerance": "medium",
+    "preferred_confirmation_frequency": "sometimes",
+    "sensitive_domains": [
+      "external communications sent on behalf of user",
+      "financial projections presented as facts",
+      "legal or regulatory claims",
+      "anything involving third-party personal data"
+    ]
+  },
+
+  "temporal_context": {
+    "recency_weight": 0.75,
+    "life_chapters": [
+      {
+        "label": "Research and ideation phase",
+        "from": "2026-01-01T00:00:00Z",
+        "to": "2026-03-01T00:00:00Z",
+        "active": false
+      },
+      {
+        "label": "Build and launch phase",
+        "from": "2026-03-01T00:00:00Z",
+        "to": null,
+        "active": true
+      }
+    ]
+  },
+
+  "extensions": {},
+
+  "provenance": {
+    "source_platforms": ["synthesised"],
+    "extraction_method": "synthesised",
+    "sanitised": true,
+    "sanitised_at": "2026-04-03T00:00:00Z",
+    "fidelity": {
+      "persona": {
+        "score": 0.91,
+        "note": "High confidence — inferred from consistent patterns across 2,400+ interactions"
+      },
+      "expertise_map": {
+        "score": 0.84,
+        "note": "Good — 5 domains identified with clear depth differentiation"
+      },
+      "project_graph": {
+        "score": 0.96,
+        "note": "Very high — projects explicitly structured and well-documented"
+      },
+      "preference_corpus": {
+        "score": 0.88,
+        "note": "High — strong signal from repeated format corrections"
+      },
+      "interaction_patterns": {
+        "score": 0.82,
+        "note": "Good — consistent patterns detected across topics"
+      },
+      "trust_boundaries": {
+        "score": 0.70,
+        "note": "Moderate — inferred from autonomy-related corrections, not explicit statements"
+      },
+      "temporal_context": {
+        "score": 0.78,
+        "note": "Good — life chapters explicitly defined, recency weight estimated"
+      }
+    },
+    "attestation_signature": null
+  }
+}
