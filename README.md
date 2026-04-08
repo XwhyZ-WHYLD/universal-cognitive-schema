@@ -33,11 +33,38 @@ No standard will emerge from the platforms. No regulator will mandate one in tim
 
 ---
 
-## What UCS is
+## What is UCS?
 
-The Universal Cognitive Schema (UCS) is an open, versioned, platform-agnostic data standard for representing a person's accumulated AI interaction profile.
+Your intelligence is fragmented.
 
-It is not a product. It is not a company. It is a **schema** — a shared language that any platform, tool, or application can speak — so that your cognitive identity can travel with you across the AI landscape, the same way your contacts travel across devices and your financial data travels across apps.
+Every AI system you use:
+- learns you separately  
+- stores context separately  
+- responds differently  
+
+You don’t move between systems.
+
+You restart.
+
+---
+
+## UCS introduces a missing layer
+
+Universal Cognitive Schema (UCS) defines a **portable cognitive identity**.
+
+Instead of adapting to every AI system:
+
+> AI systems adapt to you
+
+---
+
+## What this repo is
+
+This is not a product.
+
+It is an exploration of:
+
+> a standard for how humans interface with AI systems
 
 UCS defines a structured, human-readable, machine-parseable format for seven core dimensions of AI identity:
 
