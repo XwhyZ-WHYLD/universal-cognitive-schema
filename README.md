@@ -110,6 +110,14 @@ We are publishing this now — before any commercial product exists around it �
 
 The goal is not to build a business on top of this schema. The goal is for this schema to be so widely adopted that any business built on top of it — including commercial migration and identity products — is forced to interoperate, compete on quality, and serve users rather than trap them.
 
+## Why now?
+
+- AI ecosystems are fragmenting  
+- Identity is becoming persistent  
+- Interoperability is missing  
+
+UCS explores filling that gap.
+
 ---
 
 ## Schema structure (v0.1.0-alpha)
