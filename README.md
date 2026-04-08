@@ -11,6 +11,17 @@
 
 ## The problem
 
+Your intelligence is fragmented.
+
+Every AI system you use:
+- learns you separately  
+- stores context separately  
+- responds differently  
+
+You don’t move between systems.
+
+You restart.
+
 You have spent months — maybe years — working with AI tools. ChatGPT knows how you think. Claude understands your writing voice. Gemini is woven into your daily workflow.
 
 Now you want to try a new model. Or your company switches vendors. Or a better tool launches.
