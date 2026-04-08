@@ -100,6 +100,16 @@ UCS defines a structured, human-readable, machine-parseable format for seven cor
 
 ---
 
+## Example Output
+
+Without UCS:
+<generic response>
+
+With UCS:
+<constrained / identity-aligned response>
+
+---
+
 ## Why open source, why now
 
 The history of technology is littered with proprietary standards that entrenched incumbents and punished users. It is also full of open standards that became the invisible infrastructure of entire eras — HTTP, SMTP, OAuth, OpenAPI.
@@ -374,6 +384,17 @@ If you use UCS in research or reference it in a publication:
 MIT License — see [LICENSE](./LICENSE) for details.
 
 The schema specification itself is additionally released under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) — no rights reserved, maximum adoptability.
+
+---
+
+## Built by
+
+UCS is developed by XWHYZ
+
+Focused on:
+- AI interoperability
+- identity portability
+- cognitive infrastructure
 
 ---
 
