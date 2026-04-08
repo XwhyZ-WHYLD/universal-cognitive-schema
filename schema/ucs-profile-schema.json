@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/XwhyZ-WHYLD/universal-cognitive-schema/schema/ucs-profile-schema.json",
+  "title": "UCS Cognitive Profile",
+  "description": "Universal Cognitive Schema – structured representation of a human's cognitive identity for portable AI interaction.",
+  "type": "object",
+  "required": ["schema_version", "identity", "communication_style", "formality", "verbosity", "tone_markers"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "UCS schema version this profile conforms to.",
+      "const": "1.0.0"
+    },
+    "identity": {
+      "type": "object",
+      "description": "Core identity metadata for the Echo owner.",
+      "required": ["name", "created_at"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the human this Echo represents.",
+          "minLength": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of profile creation."
+        },
+        "bio": {
+          "type": "string",
+          "description": "Short professional biography (2-3 sentences).",
+          "maxLength": 500
+        },
+        "domains": {
+          "type": "array",
+          "description": "Primary domains of expertise or interest.",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "maxItems": 10
+        }
+      }
+    },
+    "communication_style": {
+      "type": "string",
+      "description": "Dominant communication style of the Echo owner.",
+      "enum": [
+        "analytical",
+        "narrative",
+        "socratic",
+        "direct",
+        "collaborative",
+        "visionary"
+      ]
+    },
+    "formality": {
+      "type": "string",
+      "description": "Default level of formality in responses.",
+      "enum": ["casual", "neutral", "formal", "academic"]
+    },
+    "verbosity": {
+      "type": "string",
+      "description": "Default response length preference.",
+      "enum": ["concise", "moderate", "detailed", "exhaustive"]
+    },
+    "tone_markers": {
+      "type": "array",
+      "description": "Keywords that characterise the Echo owner's tone.",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "maxItems": 10,
+      "examples": [["precise", "curious", "empathetic"], ["direct", "bold", "strategic"]]
+    },
+    "expertise_map": {
+      "type": "object",
+      "description": "Optional map of domain to self-assessed expertise level.",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["beginner", "intermediate", "advanced", "expert"]
+      }
+    },
+    "preference_corpus": {
+      "type": "object",
+      "description": "Optional formatting and structural preferences.",
+      "additionalProperties": false,
+      "properties": {
+        "prefers_tables_for_comparisons": {
+          "type": "boolean",
+          "default": false
+        },
+        "prefers_bullet_points": {
+          "type": "boolean",
+          "default": false
+        },
+        "prefers_examples": {
+          "type": "boolean",
+          "default": true
+        },
+        "response_length_chars": {
+          "type": "object",
+          "description": "Soft character limits per verbosity level.",
+          "additionalProperties": false,
+          "properties": {
+            "min": { "type": "integer", "minimum": 0 },
+            "max": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "preferred_languages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["en"]
+        }
+      }
+    },
+    "trust_boundaries": {
+      "type": "object",
+      "description": "Optional hard limits on Echo behaviour.",
+      "additionalProperties": false,
+      "properties": {
+        "forbidden_topics": {
+          "type": "array",
+          "description": "Topics the Echo must never engage with.",
+          "items": { "type": "string" }
+        },
+        "require_human_review_for": {
+          "type": "array",
+          "description": "Action categories that require explicit human confirmation before proceeding.",
+          "items": { "type": "string" }
+        },
+        "confidentiality_level": {
+          "type": "string",
+          "description": "Default confidentiality posture for information sharing.",
+          "enum": ["open", "selective", "restricted", "private"]
+        }
+      }
+    },
+    "inheritance": {
+      "type": "object",
+      "description": "Optional inheritance and legacy settings (Stage 6+).",
+      "additionalProperties": false,
+      "properties": {
+        "inheritable": {
+          "type": "boolean",
+          "description": "Whether this profile may be passed to a successor.",
+          "default": false
+        },
+        "successor_id": {
+          "type": "string",
+          "description": "Identifier of the designated successor."
+        },
+        "release_condition": {
+          "type": "string",
+          "description": "Condition under which inheritance is triggered.",
+          "enum": ["immediate", "age_gated", "event_triggered", "post_mortem"]
+        }
+      }
+    }
+  }
+}
