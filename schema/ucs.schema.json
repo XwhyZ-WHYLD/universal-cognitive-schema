@@ -1,0 +1,381 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucs-standard.org/schema/v0.1.0/ucs.schema.json",
+  "title": "Universal Cognitive Schema",
+  "description": "Open standard for portable AI identity across platforms. v0.1.0",
+  "type": "object",
+  "required": [
+    "ucs_version",
+    "profile_id",
+    "created_at",
+    "updated_at",
+    "schema_url",
+    "persona",
+    "provenance"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "ucs_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the UCS schema used.",
+      "examples": ["0.1.0"]
+    },
+    "profile_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique identifier for this profile (UUID v4)."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of profile creation."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of last profile update."
+    },
+    "schema_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical URL of the schema version used."
+    },
+
+    "persona": {
+      "type": "object",
+      "description": "Communication style and preference signals.",
+      "required": ["communication_style"],
+      "additionalProperties": false,
+      "properties": {
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "communication_style": {
+          "type": "object",
+          "description": "Weighted blend of communication modes. Values 0.0–1.0, should sum to approximately 1.0.",
+          "additionalProperties": false,
+          "properties": {
+            "direct":        { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+            "collaborative": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+            "socratic":      { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+            "narrative":     { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+          },
+          "examples": [{ "direct": 0.6, "collaborative": 0.3, "socratic": 0.1, "narrative": 0.0 }]
+        },
+        "formality": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "0.0 = maximally casual, 1.0 = maximally formal."
+        },
+        "verbosity": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "0.0 = terse/minimal, 1.0 = highly detailed/exhaustive."
+        },
+        "tone_markers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Free-form descriptors of tone (e.g. 'dry wit', 'empathetic', 'blunt').",
+          "examples": [["dry wit", "direct", "occasionally sarcastic"]]
+        },
+        "language_preferences": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["primary"],
+          "properties": {
+            "primary": {
+              "type": "string",
+              "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+              "description": "BCP-47 language tag for primary language.",
+              "examples": ["en", "en-GB", "ar"]
+            },
+            "others": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "expertise_map": {
+      "type": "object",
+      "description": "Known domains of knowledge and depth calibration.",
+      "additionalProperties": false,
+      "properties": {
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "domains": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "depth"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "depth": {
+                "type": "string",
+                "enum": ["aware", "functional", "proficient", "expert"],
+                "description": "aware=knows the concept exists; functional=can use it; proficient=can apply it fluently; expert=can extend/teach it."
+              },
+              "last_active": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "project_graph": {
+      "type": "object",
+      "description": "Active and archived projects with context.",
+      "additionalProperties": false,
+      "properties": {
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "active": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/project" }
+        },
+        "archived": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/project" }
+        }
+      }
+    },
+
+    "preference_corpus": {
+      "type": "object",
+      "description": "Output format and structural preferences.",
+      "additionalProperties": false,
+      "properties": {
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "output_format": {
+          "type": "string",
+          "enum": ["prose", "bullets", "structured", "mixed"]
+        },
+        "response_length": {
+          "type": "string",
+          "enum": ["concise", "moderate", "thorough"]
+        },
+        "code_language_preferences": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Preferred programming languages in priority order."
+        },
+        "citation_style": {
+          "type": "string",
+          "enum": ["inline", "footnote", "none"]
+        },
+        "custom": {
+          "type": "object",
+          "description": "Freeform key-value pairs for platform-specific preferences."
+        }
+      }
+    },
+
+    "interaction_patterns": {
+      "type": "object",
+      "description": "Observed patterns in how this user prompts and responds to AI.",
+      "additionalProperties": false,
+      "properties": {
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "typical_prompt_style": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "opener":    { "type": "string", "description": "How prompts typically start (e.g. 'question', 'command', 'context-then-ask')." },
+            "structure": { "type": "string", "enum": ["single-line", "multi-paragraph", "bulleted", "mixed"] },
+            "avg_length": { "type": "string", "enum": ["short", "medium", "long"] }
+          }
+        },
+        "common_corrections": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Recurring things the user corrects the AI on."
+        },
+        "reinforced_behaviours": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Behaviours the user has explicitly praised or accepted without correction."
+        },
+        "rejected_behaviours": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Behaviours the user has explicitly rejected or asked to stop."
+        }
+      }
+    },
+
+    "trust_boundaries": {
+      "type": "object",
+      "description": "What the user delegates and their risk tolerance.",
+      "additionalProperties": false,
+      "properties": {
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "autonomous_action_tolerance": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "How much the user trusts AI to act without confirmation."
+        },
+        "preferred_confirmation_frequency": {
+          "type": "string",
+          "enum": ["always", "sometimes", "rarely"]
+        },
+        "sensitive_domains": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Topics where the user wants extra care or human review."
+        }
+      }
+    },
+
+    "temporal_context": {
+      "type": "object",
+      "description": "Recency weighting and life chapter controls.",
+      "additionalProperties": false,
+      "properties": {
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "recency_weight": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "0.0 = all interactions weighted equally; 1.0 = only the most recent interactions matter."
+        },
+        "life_chapters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "from", "active"],
+            "additionalProperties": false,
+            "properties": {
+              "label":  { "type": "string" },
+              "from":   { "type": "string", "format": "date-time" },
+              "to":     { "type": ["string", "null"], "format": "date-time" },
+              "active": { "type": "boolean" },
+              "notes":  { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "extensions": {
+      "type": "object",
+      "description": "Namespace for platform-specific or community extensions. Keys must be namespaced (e.g. 'com.anthropic.*').",
+      "propertyNames": {
+        "pattern": "^[a-z0-9][a-z0-9-]*(\\.[a-z0-9][a-z0-9_-]*)+$"
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "description": "Metadata about how this profile was produced.",
+      "required": ["source_platforms", "extraction_method", "sanitised"],
+      "additionalProperties": false,
+      "properties": {
+        "source_platforms": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "AI platforms whose data was used to build this profile."
+        },
+        "extraction_method": {
+          "type": "string",
+          "enum": ["api", "export", "manual", "synthesised"]
+        },
+        "sanitised": {
+          "type": "boolean",
+          "description": "Whether content has passed through a sanitisation layer."
+        },
+        "sanitised_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "attestation_signature": {
+          "type": ["string", "null"],
+          "description": "Optional cryptographic signature attesting to provenance integrity."
+        }
+      }
+    },
+
+    "fidelity": {
+      "type": "object",
+      "description": "Optional. Fidelity report produced at extraction time.",
+      "additionalProperties": false,
+      "properties": {
+        "generated_at": { "type": "string", "format": "date-time" },
+        "overall": { "$ref": "#/$defs/fidelity_score" },
+        "persona":             { "$ref": "#/$defs/fidelity_score" },
+        "expertise_map":       { "$ref": "#/$defs/fidelity_score" },
+        "project_graph":       { "$ref": "#/$defs/fidelity_score" },
+        "preference_corpus":   { "$ref": "#/$defs/fidelity_score" },
+        "interaction_patterns":{ "$ref": "#/$defs/fidelity_score" },
+        "trust_boundaries":    { "$ref": "#/$defs/fidelity_score" },
+        "temporal_context":    { "$ref": "#/$defs/fidelity_score" }
+      }
+    }
+  },
+
+  "$defs": {
+    "project": {
+      "type": "object",
+      "required": ["id", "name", "created_at"],
+      "additionalProperties": false,
+      "properties": {
+        "id":              { "type": "string", "format": "uuid" },
+        "name":            { "type": "string" },
+        "description":     { "type": "string" },
+        "context_summary": { "type": "string" },
+        "status":          { "type": "string", "enum": ["active", "paused", "completed", "abandoned"] },
+        "created_at":      { "type": "string", "format": "date-time" },
+        "updated_at":      { "type": "string", "format": "date-time" },
+        "archived_at":     { "type": ["string", "null"], "format": "date-time" },
+        "tags":            { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "fidelity_score": {
+      "type": "object",
+      "required": ["score"],
+      "additionalProperties": false,
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "note": { "type": "string" },
+        "interaction_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

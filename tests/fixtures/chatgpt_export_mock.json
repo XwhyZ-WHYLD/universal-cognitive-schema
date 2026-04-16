@@ -1,0 +1,177 @@
+[
+  {
+    "title": "API architecture review",
+    "create_time": 1704067200.0,
+    "update_time": 1704153600.0,
+    "mapping": {
+      "msg-001": {
+        "id": "msg-001",
+        "message": {
+          "author": { "role": "user" },
+          "content": { "content_type": "text", "parts": ["Can you review this REST API design? I want it to be straightforward and well-documented. Here's the spec..."] },
+          "create_time": 1704067200.0
+        },
+        "parent": null,
+        "children": ["msg-002"]
+      },
+      "msg-002": {
+        "id": "msg-002",
+        "message": {
+          "author": { "role": "assistant" },
+          "content": { "content_type": "text", "parts": ["Here's my review of your API design..."] },
+          "create_time": 1704067260.0
+        },
+        "parent": "msg-001",
+        "children": ["msg-003"]
+      },
+      "msg-003": {
+        "id": "msg-003",
+        "message": {
+          "author": { "role": "user" },
+          "content": { "content_type": "text", "parts": ["Don't use so many bullet points, just write it out as prose. Also, lead with the main issue first."] },
+          "create_time": 1704067320.0
+        },
+        "parent": "msg-002",
+        "children": []
+      }
+    }
+  },
+  {
+    "title": "Python async patterns",
+    "create_time": 1704240000.0,
+    "update_time": 1704326400.0,
+    "mapping": {
+      "msg-004": {
+        "id": "msg-004",
+        "message": {
+          "author": { "role": "user" },
+          "content": { "content_type": "text", "parts": ["I'm working on a distributed system in Python and need to understand async patterns for handling concurrent DB writes. What are the tradeoffs between asyncio, threading, and multiprocessing here?"] },
+          "create_time": 1704240000.0
+        },
+        "parent": null,
+        "children": ["msg-005"]
+      },
+      "msg-005": {
+        "id": "msg-005",
+        "message": {
+          "author": { "role": "assistant" },
+          "content": { "content_type": "text", "parts": ["Great question! Here's a breakdown..."] },
+          "create_time": 1704240060.0
+        },
+        "parent": "msg-004",
+        "children": ["msg-006"]
+      },
+      "msg-006": {
+        "id": "msg-006",
+        "message": {
+          "author": { "role": "user" },
+          "content": { "content_type": "text", "parts": ["Please don't start with 'Great question'. Just answer directly. The asyncio explanation was good though."] },
+          "create_time": 1704240120.0
+        },
+        "parent": "msg-005",
+        "children": []
+      }
+    }
+  },
+  {
+    "title": "Machine learning model evaluation",
+    "create_time": 1704412800.0,
+    "update_time": 1704499200.0,
+    "mapping": {
+      "msg-007": {
+        "id": "msg-007",
+        "message": {
+          "author": { "role": "user" },
+          "content": { "content_type": "text", "parts": ["How should I evaluate a binary classifier when my dataset is heavily imbalanced? I'm using Python with scikit-learn."] },
+          "create_time": 1704412800.0
+        },
+        "parent": null,
+        "children": ["msg-008"]
+      },
+      "msg-008": {
+        "id": "msg-008",
+        "message": {
+          "author": { "role": "assistant" },
+          "content": { "content_type": "text", "parts": ["For imbalanced datasets, accuracy is misleading. Here are the metrics and strategies I'd recommend..."] },
+          "create_time": 1704412860.0
+        },
+        "parent": "msg-007",
+        "children": ["msg-009"]
+      },
+      "msg-009": {
+        "id": "msg-009",
+        "message": {
+          "author": { "role": "user" },
+          "content": { "content_type": "text", "parts": ["Good. Show me how to implement PR-AUC in sklearn. Use Python."] },
+          "create_time": 1704412920.0
+        },
+        "parent": "msg-008",
+        "children": []
+      }
+    }
+  },
+  {
+    "title": "Hiring a senior engineer",
+    "create_time": 1704585600.0,
+    "update_time": 1704672000.0,
+    "mapping": {
+      "msg-010": {
+        "id": "msg-010",
+        "message": {
+          "author": { "role": "user" },
+          "content": { "content_type": "text", "parts": ["I need to hire a senior backend engineer for my team. We're using Go and PostgreSQL. What interview process would you design?"] },
+          "create_time": 1704585600.0
+        },
+        "parent": null,
+        "children": ["msg-011"]
+      },
+      "msg-011": {
+        "id": "msg-011",
+        "message": {
+          "author": { "role": "assistant" },
+          "content": { "content_type": "text", "parts": ["Here's a structured interview process for a senior backend role..."] },
+          "create_time": 1704585660.0
+        },
+        "parent": "msg-010",
+        "children": []
+      }
+    }
+  },
+  {
+    "title": "GraphQL schema design for billing",
+    "create_time": 1704758400.0,
+    "update_time": 1704844800.0,
+    "mapping": {
+      "msg-012": {
+        "id": "msg-012",
+        "message": {
+          "author": { "role": "user" },
+          "content": { "content_type": "text", "parts": ["I'm migrating our billing REST API to GraphQL. Main concern is backwards compatibility with existing webhook consumers. What are my options?"] },
+          "create_time": 1704758400.0
+        },
+        "parent": null,
+        "children": ["msg-013"]
+      },
+      "msg-013": {
+        "id": "msg-013",
+        "message": {
+          "author": { "role": "assistant" },
+          "content": { "content_type": "text", "parts": ["You have three main options for backwards compatibility..."] },
+          "create_time": 1704758460.0
+        },
+        "parent": "msg-012",
+        "children": ["msg-014"]
+      },
+      "msg-014": {
+        "id": "msg-014",
+        "message": {
+          "author": { "role": "user" },
+          "content": { "content_type": "text", "parts": ["I like the federation approach. Walk me through how to implement it step by step."] },
+          "create_time": 1704758520.0
+        },
+        "parent": "msg-013",
+        "children": []
+      }
+    }
+  }
+]

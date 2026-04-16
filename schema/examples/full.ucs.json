@@ -1,0 +1,193 @@
+{
+  "ucs_version": "0.1.0",
+  "profile_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "created_at": "2025-03-15T09:00:00Z",
+  "updated_at": "2026-01-10T14:32:00Z",
+  "schema_url": "https://ucs-standard.org/schema/v0.1.0/ucs.schema.json",
+
+  "persona": {
+    "updated_at": "2026-01-10T14:32:00Z",
+    "communication_style": {
+      "direct": 0.55,
+      "collaborative": 0.30,
+      "socratic": 0.10,
+      "narrative": 0.05
+    },
+    "formality": 0.35,
+    "verbosity": 0.65,
+    "tone_markers": ["dry wit", "precise", "occasionally blunt", "curious"],
+    "language_preferences": {
+      "primary": "en-GB",
+      "others": ["ar", "fr"]
+    }
+  },
+
+  "expertise_map": {
+    "updated_at": "2026-01-08T11:00:00Z",
+    "domains": [
+      {
+        "name": "Software architecture",
+        "depth": "expert",
+        "last_active": "2026-01-09T00:00:00Z",
+        "notes": "Particular focus on distributed systems and API design."
+      },
+      {
+        "name": "Machine learning",
+        "depth": "proficient",
+        "last_active": "2025-12-20T00:00:00Z",
+        "notes": "Strong on classical ML; working to deepen transformer understanding."
+      },
+      {
+        "name": "Product strategy",
+        "depth": "functional",
+        "last_active": "2025-11-01T00:00:00Z"
+      },
+      {
+        "name": "Contract law",
+        "depth": "aware",
+        "last_active": "2025-06-01T00:00:00Z",
+        "notes": "Knows enough to flag issues; always defers to counsel."
+      }
+    ]
+  },
+
+  "project_graph": {
+    "updated_at": "2026-01-10T14:32:00Z",
+    "active": [
+      {
+        "id": "c3d4e5f6-a7b8-4901-bcde-f01234567890",
+        "name": "Universal Cognitive Schema",
+        "description": "Open standard for portable AI identity across platforms.",
+        "context_summary": "Building the core schema, reference parser and test suite for v0.1.0-alpha. Next milestone is PyPI publication.",
+        "status": "active",
+        "created_at": "2026-01-01T00:00:00Z",
+        "updated_at": "2026-01-10T00:00:00Z",
+        "archived_at": null,
+        "tags": ["open-source", "ai", "standards", "python"]
+      },
+      {
+        "id": "d4e5f6a7-b8c9-4012-cdef-012345678901",
+        "name": "Internal API migration",
+        "description": "Move three legacy REST services to GraphQL.",
+        "context_summary": "Auth service complete. Billing service in progress; unresolved question about subscription webhook backwards compatibility.",
+        "status": "active",
+        "created_at": "2025-09-01T00:00:00Z",
+        "updated_at": "2026-01-05T00:00:00Z",
+        "archived_at": null,
+        "tags": ["backend", "graphql", "migration"]
+      }
+    ],
+    "archived": [
+      {
+        "id": "e5f6a7b8-c9d0-4123-defa-123456789012",
+        "name": "Market sizing report",
+        "description": "TAM/SAM/SOM analysis for Series A deck.",
+        "context_summary": "Completed and submitted. Final figures: TAM $4.2B, SAM $380M.",
+        "status": "completed",
+        "created_at": "2025-06-01T00:00:00Z",
+        "updated_at": "2025-07-15T00:00:00Z",
+        "archived_at": "2025-07-15T00:00:00Z",
+        "tags": ["fundraising", "strategy"]
+      }
+    ]
+  },
+
+  "preference_corpus": {
+    "updated_at": "2025-12-01T00:00:00Z",
+    "output_format": "structured",
+    "response_length": "thorough",
+    "code_language_preferences": ["Python", "TypeScript", "Go"],
+    "citation_style": "inline",
+    "custom": {
+      "always_show_alternatives": true,
+      "prefer_tables_over_bullets": true,
+      "include_complexity_estimate_for_code": true
+    }
+  },
+
+  "interaction_patterns": {
+    "updated_at": "2026-01-10T14:32:00Z",
+    "typical_prompt_style": {
+      "opener": "context-then-ask",
+      "structure": "multi-paragraph",
+      "avg_length": "medium"
+    },
+    "common_corrections": [
+      "Too many bullet points — prefers prose",
+      "Asks for reasoning before conclusions, not after",
+      "Does not want caveats repeated more than once"
+    ],
+    "reinforced_behaviours": [
+      "Surfacing edge cases proactively",
+      "Distinguishing 'I don't know' from 'probably'",
+      "Asking a single clarifying question rather than a list"
+    ],
+    "rejected_behaviours": [
+      "Starting responses with 'Certainly!' or 'Great question!'",
+      "Over-hedging on well-established facts",
+      "Suggesting to 'consult a professional' without also answering the question"
+    ]
+  },
+
+  "trust_boundaries": {
+    "updated_at": "2025-11-01T00:00:00Z",
+    "autonomous_action_tolerance": "medium",
+    "preferred_confirmation_frequency": "sometimes",
+    "sensitive_domains": ["financial decisions", "legal interpretation", "personnel matters"]
+  },
+
+  "temporal_context": {
+    "updated_at": "2026-01-01T00:00:00Z",
+    "recency_weight": 0.75,
+    "life_chapters": [
+      {
+        "label": "Early career — IC engineer",
+        "from": "2016-09-01T00:00:00Z",
+        "to": "2020-06-01T00:00:00Z",
+        "active": false,
+        "notes": "Primarily backend engineering focus. Limited management context from this period."
+      },
+      {
+        "label": "Engineering leadership",
+        "from": "2020-06-01T00:00:00Z",
+        "to": "2024-01-01T00:00:00Z",
+        "active": false,
+        "notes": "Grew from EM to VP. Heavy focus on hiring, architecture decisions, and stakeholder communication."
+      },
+      {
+        "label": "Founder",
+        "from": "2024-01-01T00:00:00Z",
+        "to": null,
+        "active": true,
+        "notes": "Building UCS and related tooling. Context heavily shaped by open-source, AI portability, and early-stage startup concerns."
+      }
+    ]
+  },
+
+  "extensions": {
+    "org.ucs-standard.experimental": {
+      "cross_platform_delta_sync": false,
+      "consent_version": "1.0"
+    }
+  },
+
+  "provenance": {
+    "source_platforms": ["chatgpt", "claude"],
+    "extraction_method": "export",
+    "sanitised": true,
+    "sanitised_at": "2026-01-10T14:30:00Z",
+    "attestation_signature": null
+  },
+
+  "fidelity": {
+    "generated_at": "2026-01-10T14:32:00Z",
+    "overall":              { "score": 0.76, "note": "Good overall — trust_boundaries dimension has weakest signal." },
+    "persona":              { "score": 0.91, "note": "High confidence — inferred from 2,847 interactions.", "interaction_count": 2847 },
+    "expertise_map":        { "score": 0.78, "note": "Good — 14 domains identified; depth calibration uncertain for newer domains.", "interaction_count": 2847 },
+    "project_graph":        { "score": 0.65, "note": "Moderate — 3 active projects captured; some lacked structured context.", "interaction_count": 2847 },
+    "preference_corpus":    { "score": 0.88, "note": "High — strong signal from format corrections over time.", "interaction_count": 2847 },
+    "interaction_patterns": { "score": 0.83, "note": "Good — consistent correction patterns detected.", "interaction_count": 2847 },
+    "trust_boundaries":     { "score": 0.52, "note": "Low — insufficient explicit delegation signal in source data.", "interaction_count": 2847 },
+    "temporal_context":     { "score": 0.72, "note": "Good — life chapters inferred from topic cluster shifts.", "interaction_count": 2847 }
+  }
+}
