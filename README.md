@@ -7,6 +7,7 @@
 [![PyPI](https://img.shields.io/pypi/v/ucs-parser)](https://pypi.org/project/ucs-parser/)
 [![Tests](https://github.com/XwhyZ-WHYLD/universal-cognitive-schema/actions/workflows/tests.yml/badge.svg)](https://github.com/XwhyZ-WHYLD/universal-cognitive-schema/actions/workflows/tests.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/XwhyZ-WHYLD/universal-cognitive-schema/blob/main/CONTRIBUTING.md)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19533333.svg)](https://doi.org/10.5281/zenodo.19533333)
 
 ---
 
