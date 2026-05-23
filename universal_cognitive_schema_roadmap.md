@@ -62,6 +62,33 @@ Once a single Echo works, scaling to more users tests repeatability. It should h
 
 With multiple users and feedback, strengthen the constraint logic to produce consistent outputs even as models evolve.
 
+## Stage 5b – Jarvis Integration Layer
+| Stage | Name | Objective | Key Deliverables | Success Signal |
+|------|------|----------|-----------------|---------------|
+|5b|Jarvis Integration Layer|Add a consumer-facing task execution surface that generates Echo identity as a byproduct of natural usage|Jarvis module, interaction capture pipeline, behavioral profile auto-update|First user whose Echo was built through usage, not conscious onboarding|
+
+The Jarvis module is the go-to-market breakthrough that solves the adoption problem. Rather than asking users to consciously "create their Echo" — a high-friction, high-concept ask — the Jarvis module lets Echo identity emerge invisibly from natural usage.
+
+**The core insight:** Don't ask someone to become an Echo. Let them use a Jarvis. The Echo crystallises from behavior.
+
+Every Jarvis interaction becomes a training signal for the UCS profile. The `interaction_patterns` field captures prompt style, corrections, reinforced and rejected behaviors automatically. The user never consciously onboards — the Echo builds itself.
+
+**The flywheel this creates:**
+- Jarvis adoption → Echo created invisibly from usage
+- UCS profile validated by real behavioral data → EchoNet network grows organically
+- More Jarvis users attracted by Echo value → repeat, no ceiling
+
+**Scope:**
+- **Interaction Capture Pipeline:** Every query-response pair appended to `interaction_patterns` automatically
+- **Jarvis Task Module:** Basic task execution driven by the UCS constraint engine — every task executed in the user's cognitive style
+- **Profile Evolution Engine:** Periodic re-scoring of the UCS profile from accumulated interaction data
+- **Forkable Jarvis Adapters:** Compatibility layer for Open Interpreter, Dify, and OpenJarvis
+
+**Open source integration candidates:**
+- Open Interpreter — task execution engine, wrap with UCS constraint layer
+- Dify — workflow orchestration, UCS profile as system context
+- OpenJarvis — local-first assistant, UCS as identity backend
+  
 ## Stage 6 – Inheritance Lite
 | Stage | Name | Objective | Key Deliverables | Success Signal |
 |------|------|----------|-----------------|---------------|
@@ -84,4 +111,19 @@ Deploy Echoes within an organisation to prove value in team knowledge retention 
 After proving trust, governance, and enterprise value, the final step is to publish the UCS protocol as an open standard, enabling developers to build on top of it.
 
 ## Summary
-This roadmap balances ambition with realism: start small by proving the core value of Echoes for a single user, then progressively layer on trust, governance, multiple users, maturity, inheritance, enterprise pilots, and an open protocol. Each stage builds directly on the preceding one and has clear success signals to prevent over‑building before the concept is proven.
+This roadmap balances ambition with realism: start small by proving the core value of Echoes for a single user, then progressively layer on trust, governance, multiple users, maturity, Jarvis-driven adoption, inheritance, enterprise pilots, and an open protocol. Each stage builds directly on the preceding one and has clear success signals to prevent over‑building before the concept is proven.
+
+| Stage | Name | Status |
+|------|------|--------|
+|0|Foundation Alignment|✅ Complete|
+|1|First Echo MVP|⚠️ In Progress|
+|2|Trust Bootstrap|⏳ Pending|
+|3|Governance v1|⏳ Pending|
+|4|Multi-Echo Expansion|⏳ Pending|
+|5|Constraint Engine Maturity|⏳ Pending|
+|5b|**Jarvis Integration Layer**|⏳ Pending|
+|6|Inheritance Lite|⏳ Pending|
+|7|Enterprise Pilot|⏳ Pending|
+|8|Full UCS Protocol|⏳ Pending|
+
+The Jarvis Integration Layer is the adoption flywheel that makes all prior stages scale. Every Jarvis user is a potential Echo. Every Echo is a potential EchoNet node. The platform that owns the identity layer underneath the Jarvis wars owns the infrastructure of the post-presence economy.
