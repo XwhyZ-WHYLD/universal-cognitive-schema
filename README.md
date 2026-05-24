@@ -244,7 +244,6 @@ Key commitments:
 - All profiles must be encrypted at rest and in transit
 - Sanitisation attestation is a required field in compliant implementations
 - No compliant implementation may transmit a decrypted profile to a third party without explicit, per-dimension user consent
-- Vulnerability reports: [security@ucs-standard.org](mailto:security@ucs-standard.org)
 
 ---
 
