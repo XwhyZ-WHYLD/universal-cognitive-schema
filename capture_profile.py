@@ -343,6 +343,14 @@ def main():
     if not args.no_trust_fabric:
         profile = attach_trust_fabric_v3(profile)
 
+    # ── Stage 3: attach governance block ──
+    try:
+        from governance import init_governance
+        init_governance(profile)
+        print("  ✓ Governance block attached (owner: profile DID)")
+    except Exception as e:
+        print(f"  ⚠ Governance attach skipped: {e}")
+
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
