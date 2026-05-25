@@ -116,8 +116,8 @@ This roadmap balances ambition with realism: start small by proving the core val
 | Stage | Name | Status |
 |------|------|--------|
 |0|Foundation Alignment|✅ Complete|
-|1|First Echo MVP|⚠️ In Progress|
-|2|Trust Bootstrap|⏳ Pending|
+|1|First Echo MVP|✅ Complete|
+|2|Trust Bootstrap|⚠️ In Progress|
 |3|Governance v1|⏳ Pending|
 |4|Multi-Echo Expansion|⏳ Pending|
 |5|Constraint Engine Maturity|⏳ Pending|
