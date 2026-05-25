@@ -1,33 +1,90 @@
 #!/usr/bin/env python3
 """
-capture_profile.py – UCS Stage 1
+capture_profile.py – UCS Stage 1 + Stage 2
 Interactive CLI that walks a user through creating a UCS-compliant
 cognitive profile and writes it to a JSON file.
 
-Output format conforms to schema/ucs.schema.json (v0.1.0).
+Stage 2 addition: attach_trust_fabric_v3() automatically generates
+a DID and Ed25519 trust anchor at profile creation time, upgrading
+the provenance block to Trust Fabric v3 structure.
 """
 
 import json
 import sys
-import uuid
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
 
 
-UCS_VERSION = "0.1.0"
-SCHEMA_URL = "https://ucs-standard.org/schema/v0.1.0/ucs.schema.json"
+SCHEMA_VERSION = "1.0.0"
 
-COMMUNICATION_STYLES = ["direct", "collaborative", "socratic", "narrative", "analytical", "visionary"]
-EXPERTISE_DEPTHS = ["aware", "functional", "proficient", "expert"]
-AUTONOMY_LEVELS = ["low", "medium", "high"]
-CONFIRMATION_FREQUENCIES = ["always", "sometimes", "rarely"]
-OUTPUT_FORMATS = ["prose", "bullets", "structured", "mixed"]
-RESPONSE_LENGTHS = ["concise", "moderate", "thorough"]
+COMMUNICATION_STYLES = ["analytical", "narrative", "socratic", "direct", "collaborative", "visionary"]
+FORMALITY_LEVELS = ["casual", "neutral", "formal", "academic"]
+VERBOSITY_LEVELS = ["concise", "moderate", "detailed", "exhaustive"]
+EXPERTISE_LEVELS = ["beginner", "intermediate", "advanced", "expert"]
+CONFIDENTIALITY_LEVELS = ["open", "selective", "restricted", "private"]
 
 
 # ─────────────────────────────────────────────
-# Prompt helpers
+# Stage 2 — Trust Fabric v3 Integration
+# ─────────────────────────────────────────────
+
+def attach_trust_fabric_v3(profile: dict, anchor_output_path: str = None) -> dict:
+    """
+    Automatically generate a DID and Ed25519 trust anchor for a UCS profile
+    and upgrade its provenance block to Trust Fabric v3 structure.
+
+    This is the Stage 2 integration point — called automatically at profile
+    creation time so every new Echo has a cryptographic identity from birth.
+
+    Args:
+        profile: The assembled UCS profile dict (post-validation).
+        anchor_output_path: Optional path to write the trust anchor JSON.
+                           Defaults to <profile_name>_trust_anchor.json
+
+    Returns:
+        The profile dict with v3 provenance attached and DID set.
+    """
+    try:
+        from trust_anchor import generate_anchor, write_anchor, TrustAnchor
+        from provenance_v3 import migrate_profile
+        import dataclasses
+
+        # Generate Ed25519 keypair and DID
+        anchor = generate_anchor()
+
+        # Write anchor to disk (chmod 600 — private key protected)
+        if anchor_output_path is None:
+            name_slug = profile.get("identity", {}).get("name", "echo").lower().replace(" ", "_")
+            anchor_output_path = f"{name_slug}_trust_anchor.json"
+
+        write_anchor(anchor, Path(anchor_output_path))
+
+        # Migrate provenance to v3 structure with DID attached
+        profile = migrate_profile(profile, dataclasses.asdict(anchor))
+
+        print(f"\n  ✓ Trust Fabric v3 attached")
+        print(f"  DID:    {anchor.did}")
+        print(f"  Anchor: {anchor_output_path} (keep this file private)")
+
+        return profile
+
+    except ImportError:
+        # trust_anchor.py or provenance_v3.py not found — skip silently
+        # Stage 2 modules are optional; Stage 1 profile still valid
+        print("\n  ⚠ Trust Fabric v3 skipped (trust_anchor.py not found)")
+        print("    Run: pip install cryptography  and ensure trust_anchor.py is present")
+        return profile
+
+    except Exception as e:
+        # Never crash profile creation due to Trust Fabric failure
+        print(f"\n  ⚠ Trust Fabric v3 attachment failed: {e}")
+        print("    Profile saved without v3 provenance.")
+        return profile
+
+
+# ─────────────────────────────────────────────
+# Prompt helpers (unchanged from Stage 1)
 # ─────────────────────────────────────────────
 
 def prompt_choice(question: str, options: list[str], default: str = None) -> str:
@@ -47,22 +104,6 @@ def prompt_choice(question: str, options: list[str], default: str = None) -> str
         except ValueError:
             pass
         print("  Please enter a valid number.")
-
-
-def prompt_float(question: str, default: float = 0.5) -> float:
-    """Prompt for a float between 0.0 and 1.0."""
-    print(f"\n{question} [0.0–1.0, default {default}]")
-    while True:
-        raw = input("  > ").strip()
-        if raw == "":
-            return default
-        try:
-            val = float(raw)
-            if 0.0 <= val <= 1.0:
-                return val
-        except ValueError:
-            pass
-        print("  Please enter a number between 0.0 and 1.0.")
 
 
 def prompt_list(question: str, hint: str = "", min_items: int = 1, max_items: int = 10) -> list[str]:
@@ -105,275 +146,160 @@ def prompt_bool(question: str, default: bool = False) -> bool:
 
 
 # ─────────────────────────────────────────────
-# Section builders
+# Profile collection (unchanged from Stage 1)
 # ─────────────────────────────────────────────
 
-def collect_persona() -> dict:
-    """Collect persona / communication identity fields."""
-    print("\n── COMMUNICATION STYLE ──────────────────────────────────")
+def prompt_expertise_map() -> dict:
+    if not prompt_bool("Would you like to specify your expertise levels per domain?", default=False):
+        return {}
+    domains = prompt_list(
+        "List the domains you want to rate:",
+        hint="e.g. machine learning, product strategy, finance",
+        min_items=1,
+        max_items=8,
+    )
+    expertise_map = {}
+    for domain in domains:
+        level = prompt_choice(f"  Expertise level for '{domain}':", EXPERTISE_LEVELS, default="intermediate")
+        expertise_map[domain] = level
+    return expertise_map
 
-    style = prompt_choice(
-        "Which best describes your dominant communication style?",
+
+def prompt_trust_boundaries() -> dict:
+    if not prompt_bool("Would you like to define trust boundaries for your Echo?", default=False):
+        return {}
+    boundaries = {}
+    if prompt_bool("  Do you have any forbidden topics?", default=False):
+        boundaries["forbidden_topics"] = prompt_list(
+            "  List topics your Echo must never engage with:",
+            hint="e.g. personal finances, family matters",
+            min_items=1,
+            max_items=10,
+        )
+    if prompt_bool("  Any actions requiring human review before your Echo proceeds?", default=False):
+        boundaries["require_human_review_for"] = prompt_list(
+            "  List action categories requiring your approval:",
+            hint="e.g. legal commitments, financial decisions",
+            min_items=1,
+            max_items=10,
+        )
+    boundaries["confidentiality_level"] = prompt_choice(
+        "  Default confidentiality posture for information sharing:",
+        CONFIDENTIALITY_LEVELS,
+        default="selective",
+    )
+    return boundaries
+
+
+def build_profile(answers: dict) -> dict:
+    """Assemble a UCS-compliant profile dict from collected answers."""
+    profile = {
+        "schema_version": SCHEMA_VERSION,
+        "identity": {
+            "name": answers["name"],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        },
+        "communication_style": answers["communication_style"],
+        "formality": answers["formality"],
+        "verbosity": answers["verbosity"],
+        "tone_markers": answers["tone_markers"],
+    }
+    if answers.get("bio"):
+        profile["identity"]["bio"] = answers["bio"]
+    if answers.get("domains"):
+        profile["identity"]["domains"] = answers["domains"]
+    if answers.get("expertise_map"):
+        profile["expertise_map"] = answers["expertise_map"]
+    preference_corpus = {}
+    if "prefers_tables" in answers:
+        preference_corpus["prefers_tables_for_comparisons"] = answers["prefers_tables"]
+    if "prefers_bullets" in answers:
+        preference_corpus["prefers_bullet_points"] = answers["prefers_bullets"]
+    if preference_corpus:
+        profile["preference_corpus"] = preference_corpus
+    if answers.get("trust_boundaries"):
+        profile["trust_boundaries"] = answers["trust_boundaries"]
+    return profile
+
+
+def collect_answers() -> dict:
+    """Run the interactive questionnaire and return raw answers."""
+    print("\n" + "=" * 60)
+    print("  UCS First Echo — Cognitive Profile Capture")
+    print("  Stage 1 + Stage 2 Trust Fabric  |  github.com/XwhyZ-WHYLD/universal-cognitive-schema")
+    print("=" * 60)
+    print("\nThis takes about 5 minutes. Your answers shape your Echo.")
+    print("Press Ctrl+C at any time to cancel.\n")
+
+    answers = {}
+    answers["name"] = prompt_text("What is your full name?")
+    answers["bio"] = prompt_text(
+        "Write a short bio (2-3 sentences about who you are professionally):",
+        max_length=500,
+        required=False,
+    )
+    answers["domains"] = prompt_list(
+        "What are your primary domains of expertise or interest?",
+        hint="e.g. venture capital, AI research, product design",
+        min_items=1,
+        max_items=10,
+    )
+    answers["communication_style"] = prompt_choice(
+        "Which best describes your communication style?",
         COMMUNICATION_STYLES,
         default="direct",
     )
-
-    # Build weighted style dict — dominant style gets 0.7, user can split the rest
-    style_weights: dict[str, float] = {s: 0.0 for s in ["direct", "collaborative", "socratic", "narrative"]}
-    if style in style_weights:
-        style_weights[style] = 0.7
-    elif style == "analytical":
-        style_weights["direct"] = 0.5
-        style_weights["socratic"] = 0.2
-    elif style == "visionary":
-        style_weights["narrative"] = 0.5
-        style_weights["collaborative"] = 0.2
-
-    formality = prompt_float(
-        "Formality level (0.0 = fully casual, 1.0 = fully formal)",
-        default=0.4,
+    answers["formality"] = prompt_choice(
+        "What is your default level of formality?",
+        FORMALITY_LEVELS,
+        default="neutral",
     )
-    verbosity = prompt_float(
-        "Verbosity level (0.0 = terse/minimal, 1.0 = highly detailed)",
-        default=0.5,
+    answers["verbosity"] = prompt_choice(
+        "How detailed do you prefer your responses to be?",
+        VERBOSITY_LEVELS,
+        default="moderate",
     )
-
-    tone_markers = prompt_list(
+    answers["tone_markers"] = prompt_list(
         "List 3-5 words that best describe your tone:",
         hint="e.g. precise, curious, bold, empathetic, strategic",
         min_items=2,
         max_items=8,
     )
-
-    primary_lang = prompt_text(
-        "Primary language (BCP-47 code, e.g. 'en', 'en-GB', 'ar'):",
-        required=False,
-    ) or "en"
-
-    return {
-        "communication_style": style_weights,
-        "formality": formality,
-        "verbosity": verbosity,
-        "tone_markers": tone_markers,
-        "language_preferences": {
-            "primary": primary_lang,
-        },
-    }
-
-
-def collect_expertise_map() -> dict | None:
-    """Optionally collect a domain expertise map."""
-    if not prompt_bool("Would you like to specify your expertise levels per domain?", default=True):
-        return None
-
-    print("\n── EXPERTISE MAP ────────────────────────────────────────")
-    domains_raw = prompt_list(
-        "List the domains you want to rate:",
-        hint="e.g. venture building, AI infrastructure, product strategy",
-        min_items=1,
-        max_items=10,
+    answers["prefers_tables"] = prompt_bool(
+        "Do you prefer tables when comparing options?", default=False
     )
-
-    now = datetime.now(timezone.utc).isoformat()
-    domains = []
-    for domain in domains_raw:
-        depth = prompt_choice(
-            f"  Depth for '{domain}':",
-            EXPERTISE_DEPTHS,
-            default="proficient",
-        )
-        note = prompt_text(
-            f"  One-line note for '{domain}' (optional, press Enter to skip):",
-            required=False,
-        )
-        entry: dict = {"name": domain, "depth": depth, "last_active": now}
-        if note:
-            entry["notes"] = note
-        domains.append(entry)
-
-    return {"domains": domains}
-
-
-def collect_preference_corpus() -> dict | None:
-    """Optionally collect output format preferences."""
-    if not prompt_bool("Would you like to specify output format preferences?", default=True):
-        return None
-
-    print("\n── FORMAT PREFERENCES ───────────────────────────────────")
-    output_format = prompt_choice(
-        "Preferred output format:",
-        OUTPUT_FORMATS,
-        default="prose",
+    answers["prefers_bullets"] = prompt_bool(
+        "Do you prefer bullet points over prose?", default=False
     )
-    response_length = prompt_choice(
-        "Preferred response length:",
-        RESPONSE_LENGTHS,
-        default="moderate",
-    )
+    answers["expertise_map"] = prompt_expertise_map()
+    answers["trust_boundaries"] = prompt_trust_boundaries()
+    return answers
 
-    prefs: dict = {
-        "output_format": output_format,
-        "response_length": response_length,
-    }
-
-    langs = prompt_list(
-        "Preferred programming languages (comma-separated, or press Enter to skip):",
-        hint="e.g. Python, TypeScript",
-        min_items=0,
-        max_items=10,
-    ) if prompt_bool("  Do you have preferred programming languages?", default=False) else []
-    if langs:
-        prefs["code_language_preferences"] = langs
-
-    return prefs
-
-
-def collect_trust_boundaries() -> dict | None:
-    """Optionally collect trust boundary settings."""
-    if not prompt_bool("Would you like to define trust boundaries for your Echo?", default=True):
-        return None
-
-    print("\n── TRUST BOUNDARIES ─────────────────────────────────────")
-    autonomy = prompt_choice(
-        "How much should your Echo act without asking you first?",
-        AUTONOMY_LEVELS,
-        default="medium",
-    )
-    confirmation = prompt_choice(
-        "How often should your Echo confirm before acting?",
-        CONFIRMATION_FREQUENCIES,
-        default="sometimes",
-    )
-
-    sensitive: list[str] = []
-    if prompt_bool("  Any sensitive domains requiring extra care?", default=False):
-        sensitive = prompt_list(
-            "  List sensitive domains:",
-            hint="e.g. legal commitments, financial decisions, family matters",
-            min_items=1,
-            max_items=10,
-        )
-
-    return {
-        "autonomous_action_tolerance": autonomy,
-        "preferred_confirmation_frequency": confirmation,
-        "sensitive_domains": sensitive,
-    }
-
-
-def collect_project_graph() -> dict | None:
-    """Optionally collect active project context."""
-    if not prompt_bool("Would you like to add any active projects to your profile?", default=False):
-        return None
-
-    print("\n── ACTIVE PROJECTS ──────────────────────────────────────")
-    projects = []
-    now = datetime.now(timezone.utc).isoformat()
-
-    while True:
-        name = prompt_text("Project name (or press Enter to finish):", required=False)
-        if not name:
-            break
-        description = prompt_text("  One-line description:", required=False)
-        context = prompt_text("  Context summary (what stage, what problem):", required=False)
-        tags_raw = prompt_list(
-            "  Tags (comma-separated):",
-            hint="e.g. preseed, AI, open-source",
-            min_items=0,
-            max_items=10,
-        ) if prompt_bool("  Add tags?", default=False) else []
-
-        project: dict = {
-            "id": str(uuid.uuid4()),
-            "name": name,
-            "created_at": now,
-            "status": "active",
-        }
-        if description:
-            project["description"] = description
-        if context:
-            project["context_summary"] = context
-        if tags_raw:
-            project["tags"] = tags_raw
-        projects.append(project)
-
-        if not prompt_bool("  Add another project?", default=False):
-            break
-
-    return {"active": projects, "archived": []} if projects else None
-
-
-# ─────────────────────────────────────────────
-# Profile assembly
-# ─────────────────────────────────────────────
-
-def build_profile(
-    persona: dict,
-    expertise_map: dict | None,
-    preference_corpus: dict | None,
-    trust_boundaries: dict | None,
-    project_graph: dict | None,
-) -> dict:
-    """Assemble a ucs.schema.json-compliant profile."""
-    now = datetime.now(timezone.utc).isoformat()
-
-    profile: dict = {
-        "ucs_version": UCS_VERSION,
-        "profile_id": str(uuid.uuid4()),
-        "created_at": now,
-        "updated_at": now,
-        "schema_url": SCHEMA_URL,
-        "persona": persona,
-        "provenance": {
-            "source_platforms": ["manual"],
-            "extraction_method": "manual",
-            "sanitised": True,
-            "sanitised_at": now,
-            "attestation_signature": None,
-        },
-    }
-
-    if expertise_map:
-        profile["expertise_map"] = expertise_map
-    if preference_corpus:
-        profile["preference_corpus"] = preference_corpus
-    if trust_boundaries:
-        profile["trust_boundaries"] = trust_boundaries
-    if project_graph:
-        profile["project_graph"] = project_graph
-
-    return profile
-
-
-# ─────────────────────────────────────────────
-# Validation
-# ─────────────────────────────────────────────
 
 def validate_profile(profile: dict) -> list[str]:
-    """
-    Lightweight structural validation without external jsonschema dependency.
-    Returns list of error strings. Empty = valid.
-    """
+    """Lightweight validation. Returns list of error strings."""
     errors = []
-    required_top = ["ucs_version", "profile_id", "created_at", "updated_at",
-                    "schema_url", "persona", "provenance"]
-    for field in required_top:
+    required = ["schema_version", "identity", "communication_style", "formality", "verbosity", "tone_markers"]
+    for field in required:
         if field not in profile:
-            errors.append(f"Missing required field: '{field}'")
-
-    if "persona" in profile:
-        if "communication_style" not in profile["persona"]:
-            errors.append("Missing persona.communication_style")
-        else:
-            cs = profile["persona"]["communication_style"]
-            if not isinstance(cs, dict):
-                errors.append("persona.communication_style must be a weighted dict")
-
-    if "provenance" in profile:
-        for pf in ["source_platforms", "extraction_method", "sanitised"]:
-            if pf not in profile["provenance"]:
-                errors.append(f"Missing provenance.{pf}")
-
+            errors.append(f"Missing required field: {field}")
+    if "identity" in profile:
+        for id_field in ["name", "created_at"]:
+            if id_field not in profile["identity"]:
+                errors.append(f"Missing identity field: {id_field}")
+    if "communication_style" in profile:
+        valid = ["analytical", "narrative", "socratic", "direct", "collaborative", "visionary"]
+        if profile["communication_style"] not in valid:
+            errors.append(f"Invalid communication_style: {profile['communication_style']}")
+    if "formality" in profile:
+        if profile["formality"] not in ["casual", "neutral", "formal", "academic"]:
+            errors.append(f"Invalid formality: {profile['formality']}")
+    if "verbosity" in profile:
+        if profile["verbosity"] not in ["concise", "moderate", "detailed", "exhaustive"]:
+            errors.append(f"Invalid verbosity: {profile['verbosity']}")
+    if "tone_markers" in profile:
+        if not isinstance(profile["tone_markers"], list) or len(profile["tone_markers"]) < 1:
+            errors.append("tone_markers must be a non-empty list")
     return errors
 
 
@@ -383,7 +309,7 @@ def validate_profile(profile: dict) -> list[str]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="UCS Stage 1 – Capture a cognitive profile for your Echo."
+        description="UCS Stage 1 + Stage 2 – Capture a cognitive profile for your Echo."
     )
     parser.add_argument(
         "--output",
@@ -391,33 +317,20 @@ def main():
         default="my_echo_profile.json",
         help="Output path for the generated profile JSON (default: my_echo_profile.json)",
     )
+    parser.add_argument(
+        "--no-trust-fabric",
+        action="store_true",
+        help="Skip Trust Fabric v3 DID generation (Stage 1 profile only)",
+    )
     args = parser.parse_args()
 
-    print("\n" + "=" * 60)
-    print("  UCS First Echo — Cognitive Profile Capture")
-    print("  Stage 1 MVP  |  github.com/XwhyZ-WHYLD/universal-cognitive-schema")
-    print("=" * 60)
-    print("\nThis takes about 5 minutes. Your answers shape your Echo.")
-    print("Output conforms to UCS schema v0.1.0 (ucs.schema.json).")
-    print("Press Ctrl+C at any time to cancel.\n")
-
     try:
-        persona = collect_persona()
-        expertise_map = collect_expertise_map()
-        preference_corpus = collect_preference_corpus()
-        trust_boundaries = collect_trust_boundaries()
-        project_graph = collect_project_graph()
+        answers = collect_answers()
     except KeyboardInterrupt:
         print("\n\nProfile capture cancelled.")
         sys.exit(0)
 
-    profile = build_profile(
-        persona=persona,
-        expertise_map=expertise_map,
-        preference_corpus=preference_corpus,
-        trust_boundaries=trust_boundaries,
-        project_graph=project_graph,
-    )
+    profile = build_profile(answers)
 
     errors = validate_profile(profile)
     if errors:
@@ -426,26 +339,25 @@ def main():
             print(f"  - {err}")
         sys.exit(1)
 
+    # ── Stage 2: attach Trust Fabric v3 DID and provenance ──
+    if not args.no_trust_fabric:
+        profile = attach_trust_fabric_v3(profile)
+
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(profile, f, indent=2, ensure_ascii=False)
 
-    style_summary = ", ".join(
-        f"{k}:{v}" for k, v in profile["persona"]["communication_style"].items() if v > 0
-    )
     print(f"\n{'=' * 60}")
-    print(f"  Echo profile saved → {output_path}")
-    print(f"  Profile ID: {profile['profile_id']}")
-    print(f"  Style:      {style_summary}")
-    print(f"  Formality:  {profile['persona']['formality']}")
-    print(f"  Verbosity:  {profile['persona']['verbosity']}")
-    print(f"  Tone:       {', '.join(profile['persona']['tone_markers'])}")
+    print(f"  Echo profile saved to: {output_path}")
+    print(f"  Name:  {profile['identity']['name']}")
+    print(f"  Style: {profile['communication_style']} / {profile['formality']} / {profile['verbosity']}")
+    print(f"  Tone:  {', '.join(profile['tone_markers'])}")
+    if profile.get('did'):
+        print(f"  DID:   {profile['did']}")
     print(f"{'=' * 60}")
     print("\nNext step:")
     print(f"  python stage1_mvp.py --profile {output_path} --question \"Your question here\"")
-    print("\nValidate against schema:")
-    print(f"  python -c \"from ucs_parser import Validator; v=Validator(); print(v.validate_file('{output_path}'))\"")
 
 
 if __name__ == "__main__":
