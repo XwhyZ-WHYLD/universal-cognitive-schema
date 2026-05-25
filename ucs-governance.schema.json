@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucs-standard.org/schema/v1.0/ucs-governance.schema.json",
+  "title": "UCS Governance v1 Block",
+  "description": "Ownership, lifecycle, posthumous policy, deletion policy, disputes, and a tamper-evident audit log for a UCS/EchoNet profile. Attaches under profile.governance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "lifecycle_state", "ownership", "posthumous", "deletion", "event_log"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "policy_model": { "type": "string", "default": "UCS-GOV-v1" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "lifecycle_state": {
+      "type": "string",
+      "enum": ["active", "suspended", "deceased_pending", "posthumous", "deleted"]
+    },
+    "ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner_did", "controllers"],
+      "properties": {
+        "owner_did": { "type": ["string", "null"] },
+        "owner_label": { "type": ["string", "null"] },
+        "transfer_locked": { "type": "boolean", "default": true },
+        "controllers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["did", "scopes"],
+            "properties": {
+              "did": { "type": "string" },
+              "role": { "type": ["string", "null"] },
+              "added_at": { "type": "string", "format": "date-time" },
+              "scopes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["lifecycle", "delete", "admin", "infer", "*"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "posthumous": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["mode"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["dormant", "memorial", "active"] },
+        "directive_present": { "type": "boolean", "default": false },
+        "directive_hash": { "type": ["string", "null"] },
+        "requested_mode": { "type": "string", "enum": ["dormant", "memorial", "active"] },
+        "disclosure_label_required": { "type": "boolean", "default": true },
+        "successor_revocable": { "type": "boolean", "default": true },
+        "min_tier_for_active": {
+          "type": "string",
+          "enum": ["T0", "T1", "T2", "T3", "T4", "T5"],
+          "default": "T2"
+        },
+        "confirmed_at": { "type": "string", "format": "date-time" },
+        "effective_reason": { "type": "string" },
+        "objectors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "did": { "type": "string" },
+              "relationship": { "type": ["string", "null"] },
+              "at": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    "deletion": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "soft_delete_grace_days": { "type": "integer", "minimum": 0, "default": 30 },
+        "allow_hard_delete": { "type": "boolean", "default": true },
+        "allow_purge": { "type": "boolean", "default": true },
+        "purge_requires": { "type": "string" },
+        "pending": { "type": "object" },
+        "tombstone": { "type": "object" }
+      }
+    },
+    "disputes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["id", "claimant_did", "category", "state"],
+        "properties": {
+          "id": { "type": "string" },
+          "claimant_did": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["impersonation", "ownership", "accuracy", "posthumous_objection", "data_rights", "other"]
+          },
+          "statement": { "type": "string" },
+          "evidence_refs": { "type": "array", "items": { "type": "string" } },
+          "state": {
+            "type": "string",
+            "enum": ["open", "under_review", "resolved_upheld", "resolved_rejected", "withdrawn"]
+          },
+          "filed_at": { "type": "string", "format": "date-time" },
+          "resolved_at": { "type": "string", "format": "date-time" },
+          "resolution_note": { "type": "string" },
+          "froze_profile": { "type": "boolean" },
+          "history": { "type": "array", "items": { "type": "object" } }
+        }
+      }
+    },
+    "event_log": {
+      "type": "array",
+      "description": "Tamper-evident hash chain. Each event embeds the SHA3-512 hash of the previous event.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "timestamp"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "actor_did": { "type": ["string", "null"] },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "detail": { "type": "object" },
+          "prev_event_hash": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
