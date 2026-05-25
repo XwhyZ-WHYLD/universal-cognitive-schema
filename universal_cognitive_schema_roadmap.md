@@ -1,4 +1,4 @@
-https://github.com/XwhyZ-WHYLD/universal-cognitive-schema/new/main# Universal Cognitive Schema Project Plan
+# Universal Cognitive Schema Project Plan
 
 ## Stage 0 – Foundation Alignment
 | Stage | Name | Objective | Key Deliverables | Success Signal |
